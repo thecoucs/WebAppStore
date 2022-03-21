@@ -10,20 +10,20 @@ using WebAppStore.Models;
 
 namespace WebAppStore.Controllers
 {
-    public class ProductoController : Controller
+    public class ClienteController : Controller
     {
         string dominio = "http://localhost:65150";
         // GET: Producto
         public ActionResult Index()
         {
-            string apiUrl = dominio;
+            string apiUrl = dominio + "/Cliente/Index";
 
             WebClient client = new WebClient();
             client.Headers["Content-type"] = "application/json";
             client.Encoding = Encoding.UTF8;
             string json = client.DownloadString(apiUrl);
-            List<ProductoModel> productos = (new JavaScriptSerializer()).Deserialize<List<ProductoModel>>(json);
-            return View(productos);
+            List<ClienteModel> clientes = (new JavaScriptSerializer()).Deserialize<List<ClienteModel>>(json);
+            return View(clientes);
         }
 
         // GET: Producto/Details/5
@@ -44,7 +44,7 @@ namespace WebAppStore.Controllers
         {
             try
             {
-                string apiUrl = dominio + "/Producto/Create";
+                string apiUrl = dominio + "/Cliente/Create";
 
                 string parameters = (new JavaScriptSerializer()).Serialize(producto);
                 WebClient client = new WebClient();
@@ -64,14 +64,14 @@ namespace WebAppStore.Controllers
         // GET: Producto/Edit/5
         public ActionResult Edit(int id)
         {
-            string apiUrl = dominio + "/Producto/Edit?id=" + id;
+            string apiUrl = dominio + "/Cliente/Edit?id=" + id;
             WebClient client = new WebClient();
             client.Headers["Content-type"] = "application/json";
             client.Encoding = Encoding.UTF8;
             string json = client.DownloadString(apiUrl);
-            ProductoModel producto = (new JavaScriptSerializer()).Deserialize<ProductoModel>(json);
+            ClienteModel cliente = (new JavaScriptSerializer()).Deserialize<ClienteModel>(json);
 
-            return View(producto);
+            return View(cliente);
         }
 
         // POST: Producto/Edit/5
@@ -80,7 +80,7 @@ namespace WebAppStore.Controllers
         {
             try
             {
-                string apiUrl = dominio + "/Producto/Edit?id=" + id;
+                string apiUrl = dominio + "/Cliente/Edit?id=" + id;
 
                 string parameters = (new JavaScriptSerializer()).Serialize(producto);
                 WebClient client = new WebClient();
@@ -99,14 +99,14 @@ namespace WebAppStore.Controllers
         // GET: Producto/Delete/5
         public ActionResult Delete(int id)
         {
-            string apiUrl = dominio + "/Producto/Delete?id=" + id;
+            string apiUrl = dominio + "/Cliente/Delete?id=" + id;
             WebClient client = new WebClient();
             client.Headers["Content-type"] = "application/json";
             client.Encoding = Encoding.UTF8;
             string json = client.DownloadString(apiUrl);
-            ProductoModel producto = (new JavaScriptSerializer()).Deserialize<ProductoModel>(json);
+            ClienteModel cliente = (new JavaScriptSerializer()).Deserialize<ClienteModel>(json);
 
-            return View(producto);
+            return View(cliente);
         }
 
         // POST: Producto/Delete/5
@@ -115,7 +115,7 @@ namespace WebAppStore.Controllers
         {
             try
             {
-                string apiUrl = dominio + "/Producto/Delete?id=" + id;
+                string apiUrl = dominio + "/Cliente/Delete?id=" + id;
 
                 string parameters = (new JavaScriptSerializer()).Serialize(producto);
                 WebClient client = new WebClient();
@@ -134,7 +134,7 @@ namespace WebAppStore.Controllers
         // GET: Producto/Venta/5
         public ActionResult Venta(int id)
         {
-            string apiUrl = dominio + "/Producto/Venta?id=" + id;
+            string apiUrl = dominio + "/Cliente/Venta?id=" + id;
             WebClient client = new WebClient();
             client.Headers["Content-type"] = "application/json";
             client.Encoding = Encoding.UTF8;
@@ -150,7 +150,7 @@ namespace WebAppStore.Controllers
         {
             try
             {
-                string apiUrl = dominio + "/Producto/Venta?id=" + id;
+                string apiUrl = dominio + "/Cliente/Venta?id=" + id;
 
                 string parameters = (new JavaScriptSerializer()).Serialize(producto);
                 WebClient client = new WebClient();
