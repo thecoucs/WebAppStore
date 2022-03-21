@@ -177,8 +177,8 @@ namespace ServiceWebStore.Controllers
             try
             {
                 SqlConnection connection = new SqlConnection(connectionString);
-                SqlCommand command = new SqlCommand("PR_ELIMINAR_PRODUCTO", connection);
-                command.Parameters.Add("@ID_PRODUCTO", SqlDbType.Int).Value = id;
+                SqlCommand command = new SqlCommand("PROC_ELIMINAR_PRODUCTO", connection);
+                command.Parameters.Add("@ID", SqlDbType.Int).Value = id;
                 command.CommandType = CommandType.StoredProcedure;
                 connection.Open();
                 command.ExecuteNonQuery();
