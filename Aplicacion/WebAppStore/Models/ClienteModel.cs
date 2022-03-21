@@ -5,10 +5,12 @@ using System.Web;
 
 namespace WebAppStore.Models
 {
-    public class ProductoModel
+    public class ClienteModel
     {
         public int Id { get; set; }
+        public string NumeroDocumento { get; set; }
         public string Nombre { get; set; }
-        public Decimal Precio { get; set; }
+        public string Apellido { get; set; }
+        public Decimal Telefono { get; set; }
     }
 }
