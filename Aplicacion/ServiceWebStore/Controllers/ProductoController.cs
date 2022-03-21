@@ -11,7 +11,7 @@ namespace ServiceWebStore.Controllers
 {
     public class ProductoController : Controller
     {
-        string connectionString = @"Data Source = localhost; Initial Catalog = Store; Integrated Security = True";
+        string connectionString = @"Data Source = localhost; Initial Catalog = STORE; Integrated Security = True";
         // GET: Producto
         [HttpGet]
         public ActionResult Index()
@@ -19,23 +19,16 @@ namespace ServiceWebStore.Controllers
             List<ProductoModel> productos = new List<ProductoModel>();
             DataTable dataTable = new DataTable();
             SqlConnection connection = new SqlConnection(connectionString);
-            SqlCommand command = new SqlCommand("PR_CONSULTAR_PRODUCTO", connection);
+            SqlCommand command = new SqlCommand("PROC_CONSULTA_PRODUCTOS", connection);
             command.CommandType = CommandType.StoredProcedure;
             connection.Open();
             SqlDataReader sqlDataReader = command.ExecuteReader();
             while (sqlDataReader.Read())
             {
                 ProductoModel producto = new ProductoModel();
-                CategoriaModel categoria = new CategoriaModel();
                 producto.Id = sqlDataReader.GetInt32(0);
                 producto.Nombre = sqlDataReader.GetString(1);
-                producto.Precio = sqlDataReader.GetInt32(2);
-                producto.Peso = sqlDataReader.GetInt32(3);
-                producto.Stock = sqlDataReader.GetInt32(6);
-                producto.Fecha_Creacion = sqlDataReader.GetDateTime(7).Date.ToString("dd/MM/yyyy");
-                categoria.Id = sqlDataReader.GetInt32(4);
-                categoria.Nombre = sqlDataReader.GetString(5);
-                producto.Categoria = categoria;
+                producto.Precio = sqlDataReader.GetDecimal(2);
                 productos.Add(producto);
             }
             connection.Close();
@@ -50,26 +43,26 @@ namespace ServiceWebStore.Controllers
         }
 
         // GET: Producto/Create
-        public ActionResult Create()
-        {
-            List<CategoriaModel> categorias = new List<CategoriaModel>();
-            DataTable dataTable = new DataTable();
-            SqlConnection connection = new SqlConnection(connectionString);
-            SqlCommand command = new SqlCommand("PR_CONSULTAR_CATEGORIA", connection);
-            command.CommandType = CommandType.StoredProcedure;
-            connection.Open();
-            SqlDataReader sqlDataReader = command.ExecuteReader();
-            while (sqlDataReader.Read())
-            {
-                CategoriaModel categoria = new CategoriaModel();
-                categoria.Id = sqlDataReader.GetInt32(0);
-                categoria.Nombre = sqlDataReader.GetString(1);
-                categorias.Add(categoria);
-            }
-            connection.Close();
+        //public ActionResult Create()
+        //{
+        //    List<CategoriaModel> categorias = new List<CategoriaModel>();
+        //    DataTable dataTable = new DataTable();
+        //    SqlConnection connection = new SqlConnection(connectionString);
+        //    SqlCommand command = new SqlCommand("PR_CONSULTAR_CATEGORIA", connection);
+        //    command.CommandType = CommandType.StoredProcedure;
+        //    connection.Open();
+        //    SqlDataReader sqlDataReader = command.ExecuteReader();
+        //    while (sqlDataReader.Read())
+        //    {
+        //        CategoriaModel categoria = new CategoriaModel();
+        //        categoria.Id = sqlDataReader.GetInt32(0);
+        //        categoria.Nombre = sqlDataReader.GetString(1);
+        //        categorias.Add(categoria);
+        //    }
+        //    connection.Close();
 
-            return Json(categorias, JsonRequestBehavior.AllowGet);
-        }
+        //    return Json(categorias, JsonRequestBehavior.AllowGet);
+        //}
 
         // POST: Producto/Create
         [HttpPost]
@@ -79,12 +72,9 @@ namespace ServiceWebStore.Controllers
             try
             {
                 SqlConnection connection = new SqlConnection(connectionString);
-                SqlCommand command = new SqlCommand("PR_CREAR_PRODUCTO", connection);
+                SqlCommand command = new SqlCommand("PROC_CREAR_PRODUCTO", connection);
                 command.Parameters.Add("@NOMBRE", SqlDbType.VarChar).Value = producto.Nombre;
-                command.Parameters.Add("@PRECIO", SqlDbType.Int).Value = producto.Precio;
-                command.Parameters.Add("@PESO", SqlDbType.Int).Value = producto.Peso;
-                command.Parameters.Add("@ID_CATEGORIA", SqlDbType.Int).Value = producto.Categoria.Id;
-                command.Parameters.Add("@STOCK", SqlDbType.Int).Value = producto.Stock;
+                command.Parameters.Add("@PRECIO", SqlDbType.Decimal).Value = producto.Precio;
                 command.CommandType = CommandType.StoredProcedure;
                 connection.Open();
                 command.ExecuteNonQuery();
@@ -107,8 +97,8 @@ namespace ServiceWebStore.Controllers
             List<ProductoModel> productos = new List<ProductoModel>();
             DataTable dataTable = new DataTable();
             SqlConnection connection = new SqlConnection(connectionString);
-            SqlCommand command = new SqlCommand("PR_CONSULTAR_PRODUCTO_CODIGO", connection);
-            command.Parameters.Add("@ID_PRODUCTO", SqlDbType.Int).Value = id;
+            SqlCommand command = new SqlCommand("PROC_CONSULTA_PRODUCTO_CODIGO", connection);
+            command.Parameters.Add("@ID", SqlDbType.Int).Value = id;
             command.CommandType = CommandType.StoredProcedure;
             connection.Open();
             SqlDataReader sqlDataReader = command.ExecuteReader();
@@ -119,14 +109,7 @@ namespace ServiceWebStore.Controllers
                 CategoriaModel categoria = new CategoriaModel();
                 producto.Id = sqlDataReader.GetInt32(0);
                 producto.Nombre = sqlDataReader.GetString(1);
-                producto.Precio = sqlDataReader.GetInt32(2);
-                producto.Peso = sqlDataReader.GetInt32(3);
-                producto.Stock = sqlDataReader.GetInt32(6);
-                producto.Fecha_Creacion = sqlDataReader.GetDateTime(7).Date.ToString("dd/MM/yyyy");
-                categoria.Id = sqlDataReader.GetInt32(4);
-                categoria.Nombre = sqlDataReader.GetString(5);
-                producto.Categoria = categoria;
-                
+                producto.Precio = sqlDataReader.GetDecimal(2);
             }
             connection.Close();
 
@@ -144,10 +127,7 @@ namespace ServiceWebStore.Controllers
                 SqlCommand command = new SqlCommand("PR_ACTUALIZAR_PRODUCTO", connection);
                 command.Parameters.Add("@ID_PRODUCTO", SqlDbType.Int).Value = id;
                 command.Parameters.Add("@NOMBRE", SqlDbType.VarChar).Value = producto.Nombre;
-                command.Parameters.Add("@PRECIO", SqlDbType.Int).Value = producto.Precio;
-                command.Parameters.Add("@PESO", SqlDbType.Int).Value = producto.Peso;
-                command.Parameters.Add("@CAT_ID", SqlDbType.Int).Value = producto.Categoria.Id;
-                command.Parameters.Add("@STOCK", SqlDbType.Int).Value = producto.Stock;
+                command.Parameters.Add("@PRECIO", SqlDbType.Decimal).Value = producto.Precio;
                 command.CommandType = CommandType.StoredProcedure;
                 connection.Open();
                 command.ExecuteNonQuery();
@@ -169,8 +149,8 @@ namespace ServiceWebStore.Controllers
             List<ProductoModel> productos = new List<ProductoModel>();
             DataTable dataTable = new DataTable();
             SqlConnection connection = new SqlConnection(connectionString);
-            SqlCommand command = new SqlCommand("PR_CONSULTAR_PRODUCTO_CODIGO", connection);
-            command.Parameters.Add("@ID_PRODUCTO", SqlDbType.Int).Value = id;
+            SqlCommand command = new SqlCommand("PROC_CONSULTA_PRODUCTO_CODIGO", connection);
+            command.Parameters.Add("@ID", SqlDbType.Int).Value = id;
             command.CommandType = CommandType.StoredProcedure;
             connection.Open();
             SqlDataReader sqlDataReader = command.ExecuteReader();
@@ -181,13 +161,7 @@ namespace ServiceWebStore.Controllers
                 CategoriaModel categoria = new CategoriaModel();
                 producto.Id = sqlDataReader.GetInt32(0);
                 producto.Nombre = sqlDataReader.GetString(1);
-                producto.Precio = sqlDataReader.GetInt32(2);
-                producto.Peso = sqlDataReader.GetInt32(3);
-                producto.Stock = sqlDataReader.GetInt32(6);
-                producto.Fecha_Creacion = sqlDataReader.GetDateTime(7).Date.ToString("dd/MM/yyyy");
-                categoria.Id = sqlDataReader.GetInt32(4);
-                categoria.Nombre = sqlDataReader.GetString(5);
-                producto.Categoria = categoria;
+                producto.Precio = sqlDataReader.GetDecimal(2);
 
             }
             connection.Close();
@@ -221,61 +195,61 @@ namespace ServiceWebStore.Controllers
         }
 
         // GET: Producto/Venta/5
-        public ActionResult Venta(int id)
-        {
-            List<ProductoModel> productos = new List<ProductoModel>();
-            DataTable dataTable = new DataTable();
-            SqlConnection connection = new SqlConnection(connectionString);
-            SqlCommand command = new SqlCommand("PR_CONSULTAR_PRODUCTO_CODIGO", connection);
-            command.Parameters.Add("@ID_PRODUCTO", SqlDbType.Int).Value = id;
-            command.CommandType = CommandType.StoredProcedure;
-            connection.Open();
-            SqlDataReader sqlDataReader = command.ExecuteReader();
-            ProductoModel producto = new ProductoModel();
-            while (sqlDataReader.Read())
-            {
+        //public ActionResult Venta(int id)
+        //{
+        //    List<ProductoModel> productos = new List<ProductoModel>();
+        //    DataTable dataTable = new DataTable();
+        //    SqlConnection connection = new SqlConnection(connectionString);
+        //    SqlCommand command = new SqlCommand("PR_CONSULTAR_PRODUCTO_CODIGO", connection);
+        //    command.Parameters.Add("@ID_PRODUCTO", SqlDbType.Int).Value = id;
+        //    command.CommandType = CommandType.StoredProcedure;
+        //    connection.Open();
+        //    SqlDataReader sqlDataReader = command.ExecuteReader();
+        //    ProductoModel producto = new ProductoModel();
+        //    while (sqlDataReader.Read())
+        //    {
 
-                CategoriaModel categoria = new CategoriaModel();
-                producto.Id = sqlDataReader.GetInt32(0);
-                producto.Nombre = sqlDataReader.GetString(1);
-                producto.Precio = sqlDataReader.GetInt32(2);
-                producto.Peso = sqlDataReader.GetInt32(3);
-                producto.Stock = sqlDataReader.GetInt32(6);
-                producto.Fecha_Creacion = sqlDataReader.GetDateTime(7).Date.ToString("dd/MM/yyyy");
-                categoria.Id = sqlDataReader.GetInt32(4);
-                categoria.Nombre = sqlDataReader.GetString(5);
-                producto.Categoria = categoria;
+        //        CategoriaModel categoria = new CategoriaModel();
+        //        producto.Id = sqlDataReader.GetInt32(0);
+        //        producto.Nombre = sqlDataReader.GetString(1);
+        //        producto.Precio = sqlDataReader.GetInt32(2);
+        //        producto.Peso = sqlDataReader.GetInt32(3);
+        //        producto.Stock = sqlDataReader.GetInt32(6);
+        //        producto.Fecha_Creacion = sqlDataReader.GetDateTime(7).Date.ToString("dd/MM/yyyy");
+        //        categoria.Id = sqlDataReader.GetInt32(4);
+        //        categoria.Nombre = sqlDataReader.GetString(5);
+        //        producto.Categoria = categoria;
 
-            }
-            connection.Close();
+        //    }
+        //    connection.Close();
 
-            return Json(producto, JsonRequestBehavior.AllowGet);
-        }
+        //    return Json(producto, JsonRequestBehavior.AllowGet);
+        //}
 
-        // POST: Producto/Venta/5
-        [HttpPost]
-        public ActionResult Venta(int id, ProductoModel producto)
-        {
-            string resultado = "correcto";
-            try
-            {
-                SqlConnection connection = new SqlConnection(connectionString);
-                SqlCommand command = new SqlCommand("PR_GUARDAR_VENTA", connection);
-                command.Parameters.Add("@ID_PRODUCTO", SqlDbType.Int).Value = id;
-                command.Parameters.Add("@CANTIDAD", SqlDbType.Int).Value = producto.Stock;
-                command.CommandType = CommandType.StoredProcedure;
-                connection.Open();
-                command.ExecuteNonQuery();
-                // TODO: Add insert logic here
-                connection.Close();
+        //// POST: Producto/Venta/5
+        //[HttpPost]
+        //public ActionResult Venta(int id, ProductoModel producto)
+        //{
+        //    string resultado = "correcto";
+        //    try
+        //    {
+        //        SqlConnection connection = new SqlConnection(connectionString);
+        //        SqlCommand command = new SqlCommand("PR_GUARDAR_VENTA", connection);
+        //        command.Parameters.Add("@ID_PRODUCTO", SqlDbType.Int).Value = id;
+        //        command.Parameters.Add("@CANTIDAD", SqlDbType.Int).Value = producto.Stock;
+        //        command.CommandType = CommandType.StoredProcedure;
+        //        connection.Open();
+        //        command.ExecuteNonQuery();
+        //        // TODO: Add insert logic here
+        //        connection.Close();
 
-                return Json(resultado, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
-            {
-                resultado = "incorrecto " + ex;
-                return Json(resultado, JsonRequestBehavior.AllowGet);
-            }
-        }
+        //        return Json(resultado, JsonRequestBehavior.AllowGet);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        resultado = "incorrecto " + ex;
+        //        return Json(resultado, JsonRequestBehavior.AllowGet);
+        //    }
+        //}
     }
 }
