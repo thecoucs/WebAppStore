@@ -1,9 +1,0 @@
-﻿@model IEnumerable<WebAppCafeteria.Models.CategoriaModel>
-
-
-<label class="control-label col-md-2">Categoria</label>
-<div class="col-md-10">
-    @Html.DropDownList("lstCategorias", Model.Select(m => new SelectListItem { Text = m.Nombre, Value = m.Id.ToString() }), new {@id="lstCategories", @class = "form-control", @onchange="cambioCat();"})
-</div>
-
-
