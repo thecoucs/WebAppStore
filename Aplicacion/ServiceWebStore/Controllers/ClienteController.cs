@@ -143,7 +143,7 @@ namespace ServiceWebCafeteria.Controllers
             DataTable dataTable = new DataTable();
             SqlConnection connection = new SqlConnection(connectionString);
             SqlCommand command = new SqlCommand("PROC_CONSULTA_CLIENTE_CODIGO", connection);
-            command.Parameters.Add("@ID_PRODUCTO", SqlDbType.Int).Value = id;
+            command.Parameters.Add("@ID", SqlDbType.Int).Value = id;
             command.CommandType = CommandType.StoredProcedure;
             connection.Open();
             SqlDataReader sqlDataReader = command.ExecuteReader();
