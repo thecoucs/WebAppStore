@@ -134,14 +134,22 @@ namespace WebAppStore.Controllers
         // GET: Producto/Venta/5
         public ActionResult Venta(int id)
         {
-            string apiUrl = dominio + "/Producto/Venta?id=" + id;
+            string apiUrl = dominio + "/Cliente/Index";
+
             WebClient client = new WebClient();
             client.Headers["Content-type"] = "application/json";
             client.Encoding = Encoding.UTF8;
             string json = client.DownloadString(apiUrl);
-            ProductoModel producto = (new JavaScriptSerializer()).Deserialize<ProductoModel>(json);
+            List<ClienteModel> clientes = (new JavaScriptSerializer()).Deserialize<List<ClienteModel>>(json);
+            ViewBag.ListaClientes = clientes;
 
-            return View(producto);
+            apiUrl = dominio + "/Producto/Venta?id="+id;
+            client.Headers["Content-type"] = "application/json";
+            client.Encoding = Encoding.UTF8;
+            json = client.DownloadString(apiUrl);
+            ProductoModel producto = (new JavaScriptSerializer()).Deserialize<ProductoModel>(json);
+            ViewBag.Producto = producto;
+            return View();
         }
 
         // POST: Producto/Venta/5

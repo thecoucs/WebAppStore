@@ -1,0 +1,7 @@
+﻿@model IEnumerable<WebAppStore.Models.ClienteModel> 
+<label class="control-label col-md-2" >Cliente</label>
+<div class="col-md-10">
+    @Html.DropDownList("lstClientes", Model.Select(m => new SelectListItem { Text = m.Nombre + " " + m.Apellido, Value = m.Id.ToString()}), new { @id = "lstClientes", @class = "form-control",
+    @onchange = "cambioCliente();"
+})
+</div>
