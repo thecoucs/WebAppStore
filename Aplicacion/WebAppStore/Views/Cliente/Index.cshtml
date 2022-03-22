@@ -7,7 +7,7 @@
 <h2>Lista de Clientes</h2>
 
 <p>
-    @Html.ActionLink("Agregar Producto", "Create")
+    @Html.ActionLink("Agregar Cliente", "Create",null, new { @class = "btn btn-primary" })
 </p>
 <table class="table">
     <tr>
@@ -48,7 +48,6 @@
                 @Html.DisplayFor(modelItem => item.Telefono)
             </td>
             <td>
-                @Html.ActionLink("VENDER", "Venta", new { id = item.Id }) |
                 @Html.ActionLink("EDITAR", "Edit", new { id = item.Id }) |
                 @Html.ActionLink("ELIMINAR", "Delete", new { id = item.Id })
             </td>

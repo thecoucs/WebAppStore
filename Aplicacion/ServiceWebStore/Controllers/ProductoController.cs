@@ -124,8 +124,8 @@ namespace ServiceWebStore.Controllers
             try
             {
                 SqlConnection connection = new SqlConnection(connectionString);
-                SqlCommand command = new SqlCommand("PR_ACTUALIZAR_PRODUCTO", connection);
-                command.Parameters.Add("@ID_PRODUCTO", SqlDbType.Int).Value = id;
+                SqlCommand command = new SqlCommand("PROC_ACTUALIZAR_PRODUCTO", connection);
+                command.Parameters.Add("@ID", SqlDbType.Int).Value = id;
                 command.Parameters.Add("@NOMBRE", SqlDbType.VarChar).Value = producto.Nombre;
                 command.Parameters.Add("@PRECIO", SqlDbType.Decimal).Value = producto.Precio;
                 command.CommandType = CommandType.StoredProcedure;
@@ -194,62 +194,94 @@ namespace ServiceWebStore.Controllers
             }
         }
 
+        public ActionResult GetVenta()
+        {
+            List<VentaModel> ventas = new List<VentaModel>();
+            DataTable dataTable = new DataTable();
+            SqlConnection connection = new SqlConnection(connectionString);
+            SqlCommand command = new SqlCommand("PROC_CONSULTAR_VENTAS", connection);
+            command.CommandType = CommandType.StoredProcedure;
+            connection.Open();
+            SqlDataReader sqlDataReader = command.ExecuteReader();
+            
+            while (sqlDataReader.Read())
+            {
+                VentaModel venta = new VentaModel();
+                ProductoModel producto = new ProductoModel();
+                ClienteModel cliente = new ClienteModel();
+                venta.Id = sqlDataReader.GetInt32(0);
+                producto.Id = sqlDataReader.GetInt32(1);
+                producto.Nombre = sqlDataReader.GetString(2);
+                producto.Precio = sqlDataReader.GetDecimal(3);
+                cliente.Id = sqlDataReader.GetInt32(4);
+                cliente.NumeroDocumento = sqlDataReader.GetString(5);
+                cliente.Nombre = sqlDataReader.GetString(6);
+                cliente.Apellido = sqlDataReader.GetString(7);
+                cliente.Telefono = sqlDataReader.GetDecimal(8);
+                venta.Cantidad = sqlDataReader.GetInt32(9);
+                venta.ValorTotal = sqlDataReader.GetDecimal(10);
+
+                venta.Producto = producto;
+                venta.Cliente = cliente;
+
+                ventas.Add(venta);
+            }
+            connection.Close();
+
+            return Json(ventas, JsonRequestBehavior.AllowGet);
+        }
+
         // GET: Producto/Venta/5
-        //public ActionResult Venta(int id)
-        //{
-        //    List<ProductoModel> productos = new List<ProductoModel>();
-        //    DataTable dataTable = new DataTable();
-        //    SqlConnection connection = new SqlConnection(connectionString);
-        //    SqlCommand command = new SqlCommand("PR_CONSULTAR_PRODUCTO_CODIGO", connection);
-        //    command.Parameters.Add("@ID_PRODUCTO", SqlDbType.Int).Value = id;
-        //    command.CommandType = CommandType.StoredProcedure;
-        //    connection.Open();
-        //    SqlDataReader sqlDataReader = command.ExecuteReader();
-        //    ProductoModel producto = new ProductoModel();
-        //    while (sqlDataReader.Read())
-        //    {
+        public ActionResult Venta(int id)
+        {
+            List<ProductoModel> productos = new List<ProductoModel>();
+            DataTable dataTable = new DataTable();
+            SqlConnection connection = new SqlConnection(connectionString);
+            SqlCommand command = new SqlCommand("PROC_CONSULTA_PRODUCTO_CODIGO", connection);
+            command.Parameters.Add("@ID", SqlDbType.Int).Value = id;
+            command.CommandType = CommandType.StoredProcedure;
+            connection.Open();
+            SqlDataReader sqlDataReader = command.ExecuteReader();
+            ProductoModel producto = new ProductoModel();
+            while (sqlDataReader.Read())
+            {
 
-        //        CategoriaModel categoria = new CategoriaModel();
-        //        producto.Id = sqlDataReader.GetInt32(0);
-        //        producto.Nombre = sqlDataReader.GetString(1);
-        //        producto.Precio = sqlDataReader.GetInt32(2);
-        //        producto.Peso = sqlDataReader.GetInt32(3);
-        //        producto.Stock = sqlDataReader.GetInt32(6);
-        //        producto.Fecha_Creacion = sqlDataReader.GetDateTime(7).Date.ToString("dd/MM/yyyy");
-        //        categoria.Id = sqlDataReader.GetInt32(4);
-        //        categoria.Nombre = sqlDataReader.GetString(5);
-        //        producto.Categoria = categoria;
+                CategoriaModel categoria = new CategoriaModel();
+                producto.Id = sqlDataReader.GetInt32(0);
+                producto.Nombre = sqlDataReader.GetString(1);
+                producto.Precio = sqlDataReader.GetDecimal(2);
+            }
+            connection.Close();
 
-        //    }
-        //    connection.Close();
+            return Json(producto, JsonRequestBehavior.AllowGet);
+        }
 
-        //    return Json(producto, JsonRequestBehavior.AllowGet);
-        //}
+        // POST: Producto/Venta/5
+        [HttpPost]
+        public ActionResult Venta(VentaModel venta)
+        {
+            string resultado = "correcto";
+            try
+            {
+                SqlConnection connection = new SqlConnection(connectionString);
+                SqlCommand command = new SqlCommand("PROC_GUARDAR_VENTA", connection);
+                command.Parameters.Add("@ID_PRODUCTO", SqlDbType.Int).Value = venta.Producto.Id;
+                command.Parameters.Add("@ID_CLIENTE", SqlDbType.Int).Value = venta.Cliente.Id;
+                command.Parameters.Add("@CANTIDAD", SqlDbType.Int).Value = venta.Cantidad;
+                command.Parameters.Add("@VALOR_TOTAL", SqlDbType.Decimal).Value = venta.ValorTotal;
+                command.CommandType = CommandType.StoredProcedure;
+                connection.Open();
+                command.ExecuteNonQuery();
+                // TODO: Add insert logic here
+                connection.Close();
 
-        //// POST: Producto/Venta/5
-        //[HttpPost]
-        //public ActionResult Venta(int id, ProductoModel producto)
-        //{
-        //    string resultado = "correcto";
-        //    try
-        //    {
-        //        SqlConnection connection = new SqlConnection(connectionString);
-        //        SqlCommand command = new SqlCommand("PR_GUARDAR_VENTA", connection);
-        //        command.Parameters.Add("@ID_PRODUCTO", SqlDbType.Int).Value = id;
-        //        command.Parameters.Add("@CANTIDAD", SqlDbType.Int).Value = producto.Stock;
-        //        command.CommandType = CommandType.StoredProcedure;
-        //        connection.Open();
-        //        command.ExecuteNonQuery();
-        //        // TODO: Add insert logic here
-        //        connection.Close();
-
-        //        return Json(resultado, JsonRequestBehavior.AllowGet);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        resultado = "incorrecto " + ex;
-        //        return Json(resultado, JsonRequestBehavior.AllowGet);
-        //    }
-        //}
+                return Json(resultado, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                resultado = "incorrecto " + ex;
+                return Json(resultado, JsonRequestBehavior.AllowGet);
+            }
+        }
     }
 }
