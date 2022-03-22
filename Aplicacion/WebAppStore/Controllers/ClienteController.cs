@@ -40,13 +40,13 @@ namespace WebAppStore.Controllers
 
         // POST: Producto/Create
         [HttpPost]
-        public ActionResult Create(ProductoModel producto)
+        public ActionResult Create(ClienteModel  cliente)
         {
             try
             {
                 string apiUrl = dominio + "/Cliente/Create";
 
-                string parameters = (new JavaScriptSerializer()).Serialize(producto);
+                string parameters = (new JavaScriptSerializer()).Serialize(cliente);
                 WebClient client = new WebClient();
                 client.Headers["Content-type"] = "application/json";
                 client.Encoding = Encoding.UTF8;
@@ -76,13 +76,13 @@ namespace WebAppStore.Controllers
 
         // POST: Producto/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, ProductoModel producto)
+        public ActionResult Edit(int id, ClienteModel cliente)
         {
             try
             {
                 string apiUrl = dominio + "/Cliente/Edit?id=" + id;
 
-                string parameters = (new JavaScriptSerializer()).Serialize(producto);
+                string parameters = (new JavaScriptSerializer()).Serialize(cliente);
                 WebClient client = new WebClient();
                 client.Headers["Content-type"] = "application/json";
                 client.Encoding = Encoding.UTF8;
@@ -111,13 +111,13 @@ namespace WebAppStore.Controllers
 
         // POST: Producto/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, ProductoModel producto)
+        public ActionResult Delete(int id, ClienteModel cliente)
         {
             try
             {
                 string apiUrl = dominio + "/Cliente/Delete?id=" + id;
 
-                string parameters = (new JavaScriptSerializer()).Serialize(producto);
+                string parameters = (new JavaScriptSerializer()).Serialize(cliente);
                 WebClient client = new WebClient();
                 client.Headers["Content-type"] = "application/json";
                 client.Encoding = Encoding.UTF8;
